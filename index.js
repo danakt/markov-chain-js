@@ -15,16 +15,23 @@ console.timeEnd('Подготовка исходных данных')
 
 // Генерация предложения
 console.time('Генерация текста')
-let randomSentence = ''
-for (var i = 0; i < 30; i++) {
-    randomSentence += generateText({ links, startWords })
-}
+let randomSentence = generateText({ links, startWords })
 console.timeEnd('Генерация текста')
 
 // Вывод сгенеррированного предложения на экран
 console.log(randomSentence)
 
-// Подготовка звеньев ----------------------------------------------------------
+
+/** ----------------------------------------------------------------------------
+ * Подготовка звеньев
+ * @param {string} input Исходный текст для создания звеньев
+ * @return {object}
+ *     links — Map-коллекция со звеньями,
+ *     startWords — массив со списком слов для начала предления
+ * @example
+ * let input = fs.readFileSync('./input.txt', 'utf-8')
+ * let { links, startWords } = prepareLinks({ input: })
+ */
 function prepareLinks({ input }) {
     let links = Map
     let startWords = Array
@@ -75,7 +82,13 @@ function prepareLinks({ input }) {
     return { links, startWords }
 }
 
-// Функция генерациия текста ---------------------------------------------------
+
+/** ----------------------------------------------------------------------------
+ * Функция генерациия текста
+ * @param {Map} links Ассоциативный массив со списком звеньев
+ * @param {array} startWords Массив со списком слов для начала предложения
+ * @return {string} Сгенерированный текст
+ */
 function generateText({ links, startWords }) {
     let sentence = startWords[getRandomInt({ max: startWords.length })]
     let lastWord = sentence
@@ -101,8 +114,11 @@ function generateText({ links, startWords }) {
 }
 
 
-// Получение случайного числа --------------------------------------------------
-function getRandomInt({ min, max }) {
-    if (min == null) min = 0
+/** ----------------------------------------------------------------------------
+ * Получение случайного числа
+ * @param {integer} min Минимальное значение @default 0
+ * @param {integer} max Максимальное значение
+ */
+function getRandomInt({ min = 0, max }) {
     return (Math.random() * (max - min) | 0) + min
 }
