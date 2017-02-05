@@ -1,4 +1,4 @@
-## Простой генератор текста на основе Цепи Маркова [![Travis branch](https://img.shields.io/travis/danakt/markov-chain/master.svg?style=flat-square)](https://travis-ci.org/danakt/markov-chain)
+# Генератор текста на основе Цепи Маркова [![Travis branch](https://img.shields.io/travis/danakt/markov-chain/master.svg?style=flat-square)](https://travis-ci.org/danakt/markov-chain)
 
 ### [generator.js](generator.js)
 Основной скрипт, содержащий два метода:
