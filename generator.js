@@ -10,13 +10,15 @@ module.exports = {
 
 /** ----------------------------------------------------------------------------
  * Подготовка звеньев
- * @param {string} input Исходный текст для создания звеньев
- * @return {object}
- *     links — Map-коллекция со звеньями,
- *     startWords — массив со списком слов для начала предления
+ * @arg {object} :
+ *     @param {string} input Исходный текст для создания звеньев
+ * @return {object} :
+ *     @param {Map} links ассоциативный массив со звеньями,
+ *     @param {array} startWords массив со списком слов для начала предления
+ *
  * @example
- * let input = fs.readFileSync('./input.txt', 'utf-8')
- * let { links, startWords } = prepareLinks({ input: })
+ *     let input = fs.readFileSync('./input.txt', 'utf-8')
+ *     let { links, startWords } = prepareLinks({ input })
  */
 function prepareLinks({ input }) {
     // Сперва создаём массив со стартовыыми словами
@@ -64,12 +66,12 @@ function prepareLinks({ input }) {
     return { links, startWords }
 }
 
-
 /** ----------------------------------------------------------------------------
  * Функция генерациия текста
- * @param {Map} links Ассоциативный массив со списком звеньев
- * @param {array} startWords Массив со списком слов для начала предложения
- * @param {integer} amount Количество предложений @default 1
+ * @arg {object} :
+ *     @param {Map} links Ассоциативный массив со списком звеньев
+ *     @param {array} startWords Массив со списком слов для начала предложения
+ *     @param {integer} amount Количество предложений @default 1
  * @return {string} Сгенерированный текст
  */
 function generateText({ links, startWords, amount = 1 }) {
