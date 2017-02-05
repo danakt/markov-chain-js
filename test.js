@@ -1,15 +1,44 @@
 // Зависимости -----------------------------------------------------------------
-const fs = require('fs')
+const fs     = require('fs')
+const path   = require('path')
+const expect = require('chai').expect
 const { prepareLinks, generateText } = require('./generator')
 
-// Подгружаем файл
-let input = fs.readFileSync('./input.txt', 'utf-8')
+// Подготовка ------------------------------------------------------------------
+let inputText = fs.readFileSync('./input.txt', 'utf-8')
+let { links, startWords } = prepareLinks({ input: inputText })
 
-// Подготовка звеньев
-let { links, startWords } = prepareLinks({ input })
+// Проверка --------------------------------------------------------------------
+describe('Подготовка звеньев', () => {
+    it(`Провекра количества звеньев`, () => {
+        expect(links.size).to.be.above(0);
+        expect(startWords).to.have.length.above(0)
+    })
+})
 
-// Генерация предложения
-let randomSentence = generateText({ links, startWords, amount: 1 })
+describe('Генерация текста', () => {
+    it(`1 предложение`, () => {
+        let sentece = generateText({ links, startWords })
+        expect(sentece.match(/[\.\?\!](\s|$)/g)).to.have.length(1)
+    })
 
-// Вывод сгенеррированного предложения на экран
-console.log(randomSentence)
+    it(`2 предложения`, () => {
+        let sentece = generateText({ links, startWords, amount: 2 })
+        expect(sentece.match(/[\.\?\!](\s|$)/g)).to.have.length(2)
+    })
+
+    it(`5 предложений`, () => {
+        let sentece = generateText({ links, startWords, amount: 5 })
+        expect(sentece.match(/[\.\?\!](\s|$)/g)).to.have.length(5)
+    })
+
+    it(`15 предложений`, () => {
+        let sentece = generateText({ links, startWords, amount: 15 })
+        expect(sentece.match(/[\.\?\!](\s|$)/g)).to.have.length(15)
+    })
+
+    it(`100 предложений`, () => {
+        let sentece = generateText({ links, startWords, amount: 100 })
+        expect(sentece.match(/[\.\?\!](\s|$)/g)).to.have.length(100)
+    })
+})
