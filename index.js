@@ -1,5 +1,5 @@
 /**
- * @desc Генерация текста на основе Цепи Маркова
+ * Генерация текста на основе Цепи Маркова
  * @author Danakt Frost <mail@danakt.ru>
  */
 
@@ -13,14 +13,20 @@ console.time('Подготовка исходных данных')
 let { links, startWords } = prepareLinks({ input })
 console.timeEnd('Подготовка исходных данных')
 
-// Генерация текста
+// Генерация предложения
 console.time('Генерация текста')
-console.log(generateText({ links, startWords }))
+let randomSentence = ''
+for (var i = 0; i < 30; i++) {
+    randomSentence += generateText({ links, startWords })
+}
 console.timeEnd('Генерация текста')
+
+// Вывод сгенеррированного предложения на экран
+console.log(randomSentence)
 
 // Подготовка звеньев ----------------------------------------------------------
 function prepareLinks({ input }) {
-    let links = Object
+    let links = Map
     let startWords = Array
 
     let words, set
@@ -37,39 +43,33 @@ function prepareLinks({ input }) {
         .replace(/[^A-zА-я0-9 -\!\?\.,:]/g, '')
 
     // Разбивка текста на массив
-    words = input.split(/[\n\s\xA0]+/)
+    words = input.split(/[\n\s\xA0]+/).filter(item => item)
 
     // Заполняем звенья
-    links = {}
+    links = new Map()
     for (let word of new Set(words)) {
-        if(word[word.length - 1] == null) {
-            continue
-        }
-        // Это это последнее слово в предложении, идём дальше
+        // Это это последнее слово в предложении,
+        // у него не может быть слов, которые идут после него,
+        // следовательно, идём дальше
         if(word[word.length - 1].indexOf(/[.!?]/) > -1) {
             continue
         }
 
         // Ищем слова, которые встречаются после текущего
+        // И добавляем их в список
         let index = words.indexOf(word)
         while(index > -1) {
             let nextWord = words[index + 1]
             if(nextWord == null) break
 
             // Добавляем ячейку
-            links[word] != null
-                ? links[word].add(nextWord)
-                : links[word] = new Set([nextWord])
+            links.has(word)
+                ? links.get(word).set(links.get(word).size, nextWord)
+                : links.set(word, new Map().set(0, nextWord))
 
             // Делаем новый поиск
             index = words.indexOf(word, index + 1)
         }
-
-
-        if(links[word] != null) {
-            links[word] = Array.from(links[word])
-        }
-
     }
 
     return { links, startWords }
@@ -81,10 +81,10 @@ function generateText({ links, startWords }) {
     let lastWord = sentence
 
     for(let i = 0; !/[.!?]/.test(sentence[sentence.length - 1]); i++) {
-        if(links[lastWord] == null) break
+        if(!links.has(lastWord)) break
 
-        let newWordIndex = getRandomInt({ max: links[lastWord].length })
-        let newWord = links[lastWord][newWordIndex]
+        let newWordIndex = getRandomInt({ max: links.get(lastWord).size })
+        let newWord = links.get(lastWord).get(newWordIndex)
 
         lastWord = newWord
         sentence += ' ' + newWord
