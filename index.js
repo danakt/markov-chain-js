@@ -105,7 +105,7 @@ function generateText({ links, startWords, amount = 1 }) {
 
     // Генерируем следующее предложение
     let nextSentence = Math.max(amount, 1) > 1
-        ? generateText({ links, startWords, amount: amount - 1 })
+        ? ' ' + generateText({ links, startWords, amount: amount - 1 })
         : ''
 
     return sentence + nextSentence
