@@ -2,13 +2,17 @@
   "name": "text-generator",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "generator.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -c"
   },
   "author": "Danakt Frost <mail@danakt.ru>",
   "license": "MIT",
   "dependencies": {
     "iconv-lite": "^0.4.15"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   }
 }
