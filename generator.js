@@ -3,22 +3,10 @@
  * @author Danakt Frost <mail@danakt.ru>
  */
 
- // Рантайм ---------------------------------------------------------------------
-const fs = require('fs')
-// Подгружаем файл
-input = fs.readFileSync('./input.txt', 'utf-8')
-// Подготовка звеньев
-console.time('Подготовка исходных данных')
-let { links, startWords } = prepareLinks({ input })
-console.timeEnd('Подготовка исходных данных')
-
-// Генерация предложения
-console.time('Генерация текста')
-let randomSentence = generateText({ links, startWords, amount: 5 })
-console.timeEnd('Генерация текста')
-
-// Вывод сгенеррированного предложения на экран
-console.log(randomSentence)
+module.exports = {
+    prepareLinks,
+    generateText
+}
 
 /** ----------------------------------------------------------------------------
  * Подготовка звеньев
@@ -38,11 +26,11 @@ function prepareLinks({ input }) {
 
     let words = input
         // Заменяем все символы разделения слов на человеческие
-        .replace(/[\t\n\v\f\r \xA10]/g, ' ')
+        .replace(/[\t\n\v\f\r\s\xA10]/g, ' ')
         // Удаляем ненужные символы
         .replace(/[^A-zА-я0-9 -\!\?\.,:]/g, '')
         // Разбиваем текст на массив
-        .split(/[\n\s\xA0]+/).filter(item => item)
+        .split(' ').filter(item => item)
 
     // Заполняем звенья
     let links = new Map()
@@ -59,6 +47,8 @@ function prepareLinks({ input }) {
         let index = words.indexOf(word)
         while(index > -1) {
             let nextWord = words[index + 1]
+
+            // Останавливаем цикл, если следующая ячейка пустая
             if(nextWord == null) break
 
             // Добавляем ячейку
