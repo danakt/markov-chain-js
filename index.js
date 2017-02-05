@@ -83,13 +83,13 @@ function prepareLinks({ input }) {
  * @return {string} Сгенерированный текст
  */
 function generateText({ links, startWords, amount = 1 }) {
-    let sentence = startWords[getRandomInt({ max: startWords.length })]
+    let sentence = startWords[Math.random() * startWords.length | 0]
     let lastWord = sentence
 
     for(let i = 0; !/[.!?]/.test(sentence[sentence.length - 1]); i++) {
         if(!links.has(lastWord)) break
 
-        let newWordIndex = getRandomInt({ max: links.get(lastWord).size })
+        let newWordIndex = Math.random() * links.get(lastWord).size | 0
         let newWord = links.get(lastWord).get(newWordIndex)
 
         lastWord = newWord
@@ -109,14 +109,4 @@ function generateText({ links, startWords, amount = 1 }) {
         : ''
 
     return sentence + nextSentence
-}
-
-
-/** ----------------------------------------------------------------------------
- * Получение случайного числа
- * @param {integer} min Минимальное значение @default 0
- * @param {integer} max Максимальное значение
- */
-function getRandomInt({ min = 0, max }) {
-    return (Math.random() * (max - min) | 0) + min
 }
