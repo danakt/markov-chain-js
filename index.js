@@ -3,9 +3,8 @@
  * @author Danakt Frost <mail@danakt.ru>
  */
 
+ // Рантайм ---------------------------------------------------------------------
 const fs = require('fs')
-
-// Рантайм ---------------------------------------------------------------------
 // Подгружаем файл
 input = fs.readFileSync('./input.txt', 'utf-8')
 // Подготовка звеньев
@@ -15,12 +14,11 @@ console.timeEnd('Подготовка исходных данных')
 
 // Генерация предложения
 console.time('Генерация текста')
-let randomSentence = generateText({ links, startWords })
+let randomSentence = generateText({ links, startWords, amount: 5 })
 console.timeEnd('Генерация текста')
 
 // Вывод сгенеррированного предложения на экран
 console.log(randomSentence)
-
 
 /** ----------------------------------------------------------------------------
  * Подготовка звеньев
@@ -33,27 +31,21 @@ console.log(randomSentence)
  * let { links, startWords } = prepareLinks({ input: })
  */
 function prepareLinks({ input }) {
-    let links = Map
-    let startWords = Array
-
-    let words, set
-
     // Сперва создаём массив со стартовыыми словами
-    startWords = input
+    let startWords = input
         .match(/(^|[!?.]\s)([А-Я][а-я]+)(\s|$)/gm)
         .map(item => item.replace(/[^А-я]/g, ''))
 
-    input = input
+    let words = input
         // Заменяем все символы разделения слов на человеческие
         .replace(/[\t\n\v\f\r \xA10]/g, ' ')
         // Удаляем ненужные символы
         .replace(/[^A-zА-я0-9 -\!\?\.,:]/g, '')
-
-    // Разбивка текста на массив
-    words = input.split(/[\n\s\xA0]+/).filter(item => item)
+        // Разбиваем текст на массив
+        .split(/[\n\s\xA0]+/).filter(item => item)
 
     // Заполняем звенья
-    links = new Map()
+    let links = new Map()
     for (let word of new Set(words)) {
         // Это это последнее слово в предложении,
         // у него не может быть слов, которые идут после него,
@@ -87,9 +79,10 @@ function prepareLinks({ input }) {
  * Функция генерациия текста
  * @param {Map} links Ассоциативный массив со списком звеньев
  * @param {array} startWords Массив со списком слов для начала предложения
+ * @param {integer} amount Количество предложений @default 1
  * @return {string} Сгенерированный текст
  */
-function generateText({ links, startWords }) {
+function generateText({ links, startWords, amount = 1 }) {
     let sentence = startWords[getRandomInt({ max: startWords.length })]
     let lastWord = sentence
 
@@ -106,11 +99,16 @@ function generateText({ links, startWords }) {
             // Если получилось много слов в предложении,
             // например начала повторяться какая-то фраза,
             // пробуем заново составить предложение
-            return generateText({ links, startWords })
+            return generateText({ links, startWords, amount })
         }
     }
 
-    return sentence
+    // Генерируем следующее предложение
+    let nextSentence = Math.max(amount, 1) > 1
+        ? generateText({ links, startWords, amount: amount - 1 })
+        : ''
+
+    return sentence + nextSentence
 }
 
 
