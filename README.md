@@ -1,8 +1,5 @@
-# Генератор текста [![Travis branch](https://img.shields.io/travis/danakt/markov-chain/master.svg?style=flat-square)](https://travis-ci.org/danakt/markov-chain)
-Простой пример генерации случайного текста на основе Цепи Маркова
+## Простой генератор текста на основе Цепи Маркова [![Travis branch](https://img.shields.io/travis/danakt/markov-chain/master.svg?style=flat-square)](https://travis-ci.org/danakt/markov-chain)
 
-
-## Описание файлов
 ### [generator.js](generator.js)
 Основной скрипт, содержащий два метода:
   * Построение звеньев на основе исходного текста
