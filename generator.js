@@ -3,30 +3,33 @@
  * @author Danakt Frost <mail@danakt.ru>
  */
 
-module.exports = {
-    prepareLinks,
-    generateText
-}
-
-/** ----------------------------------------------------------------------------
- * Подготовка звеньев
- * @arg {object} :
- *     @param {string} input Исходный текст для создания звеньев
- * @return {object} :
- *     @param {Map} links ассоциативный массив со звеньями,
- *     @param {array} startWords массив со списком слов для начала предления
- *
- * @example
- *     let input = fs.readFileSync('./input.txt', 'utf-8')
- *     let { links, startWords } = prepareLinks({ input })
+/**
+ * @typedef  {Object} WordList
+ * @property {Map} links
+ *           Коллекция со списокм звеньев
+ * @property {Array<string>} startWords
+ *           Массив со списком слов для начала предления
  */
-function prepareLinks({ input }) {
-    // Сперва создаём массив со стартовыыми словами
-    let startWords = input
-        .match(/(^|[!?.]\s)([А-Я][а-я]+)(\s|$)/gm)
-        .map(item => item.replace(/[^А-я]/g, ''))
 
-    let words = input
+/**
+ * Подготавливает звенья, возращает списки слов и список слов, с которых может
+ * начинаться предложение.
+ * @param  {string} input Исходный текст для создания звеньев
+ * @return {WordList}
+ */
+function prepareLinks(input) {
+    // Сперва создаём массив со стартовыыми словами
+    const startWordsMatches = input.match(/(^|[!?.]\s)([А-Я][а-я]+)(\s|$)/gm)
+
+    if (startWordsMatches == null) {
+        throw new Error('Стартовые слова не найдены')
+    }
+
+    const startWords = startWordsMatches.map(item => {
+        return item.replace(/[^А-я]/g, '')
+    })
+
+    const words = input
         // Заменяем все символы разделения слов на человеческие
         .replace(/[\t\n\v\f\r\s\xA10]/g, ' ')
         // Удаляем ненужные символы
@@ -35,12 +38,12 @@ function prepareLinks({ input }) {
         .split(' ').filter(item => item)
 
     // Заполняем звенья
-    let links = new Map()
+    const links = new Map()
     for (let word of new Set(words)) {
         // Это это последнее слово в предложении,
         // у него не может быть слов, которые идут после него,
         // следовательно, идём дальше
-        if(word[word.length - 1].indexOf(/[.!?]/) > -1) {
+        if (/[.!?]/.test(word[word.length - 1])) {
             continue
         }
 
@@ -51,7 +54,9 @@ function prepareLinks({ input }) {
             let nextWord = words[index + 1]
 
             // Останавливаем цикл, если следующая ячейка пустая
-            if(nextWord == null) break
+            if (nextWord == null) {
+                break
+            }
 
             // Добавляем ячейку
             links.has(word)
@@ -66,20 +71,21 @@ function prepareLinks({ input }) {
     return { links, startWords }
 }
 
-/** ----------------------------------------------------------------------------
- * Функция генерациия текста
- * @arg {object} :
- *     @param {Map} links Ассоциативный массив со списком звеньев
- *     @param {array} startWords Массив со списком слов для начала предложения
- *     @param {integer} amount Количество предложений @default 1
- * @return {string} Сгенерированный текст
+/**
+ * Возвращает сгенерированный текст
+ * @param  {Map}     links      Ассоциативный массив со списком звеньев
+ * @param  {Array}   startWords Массив со списком слов для начала предложения
+ * @param  {?number} [amount=1] Количество предложений
+ * @return {string}             Сгенерированный текст
  */
-function generateText({ links, startWords, amount = 1 }) {
+function generateText(links, startWords, amount = 1) {
     let sentence = startWords[Math.random() * startWords.length | 0]
     let lastWord = sentence
 
-    for(let i = 0; !/[.!?]/.test(sentence[sentence.length - 1]); i++) {
-        if(!links.has(lastWord)) break
+    for (let i = 0; !/[.!?]/.test(sentence[sentence.length - 1]); i++) {
+        if (!links.has(lastWord)) {
+            break
+        }
 
         let newWordIndex = Math.random() * links.get(lastWord).size | 0
         let newWord = links.get(lastWord).get(newWordIndex)
@@ -87,18 +93,26 @@ function generateText({ links, startWords, amount = 1 }) {
         lastWord = newWord
         sentence += ' ' + newWord
 
-        if(i > 30) {
+        if (i > 30) {
             // Если получилось много слов в предложении,
             // например начала повторяться какая-то фраза,
             // пробуем заново составить предложение
-            return generateText({ links, startWords, amount })
+            return generateText(links, startWords, amount)
         }
     }
 
     // Генерируем следующее предложение
-    let nextSentence = Math.max(amount, 1) > 1
-        ? ' ' + generateText({ links, startWords, amount: amount - 1 })
+    const nextSentence = Math.max(amount, 1) > 1
+        ? ' ' + generateText(links, startWords, amount - 1)
         : ''
 
     return sentence + nextSentence
+}
+
+/**
+ * @exports
+ */
+module.exports = {
+    prepareLinks,
+    generateText,
 }
