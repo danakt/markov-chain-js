@@ -1,6 +1,6 @@
 /**
  * Генерация текста на основе Цепи Маркова
- * @author Danakt Frost <mail@danakt.ru>
+ * @author Danakt Frost <danakt@protonmail.com>
  */
 
 /**
