@@ -3,15 +3,9 @@ const path   = require('path')
 const expect = require('chai').expect
 const { prepareLinks, generateText } = require('./generator')
 
-/**
- * Подготовка
- */
 const inputText = fs.readFileSync('./input.txt', 'utf-8')
 const { links, startWords } = prepareLinks(inputText)
 
-/**
- * Проверка
- */
 describe('Подготовка звеньев', () => {
     it(`Провекра количества звеньев`, () => {
         expect(links.size).to.be.above(0);

@@ -9,10 +9,10 @@
   "author": "Danakt Frost <mail@danakt.ru>",
   "license": "MIT",
   "dependencies": {
-    "iconv-lite": "^0.4.15"
+    "iconv-lite": "^0.4.24"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
   }
 }

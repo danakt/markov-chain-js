@@ -1,20 +1,19 @@
 /**
- * Генерация текста на основе Цепи Маркова
+ * Простая генерация текста на основе Цепи Маркова
  * @author Danakt Frost <danakt@protonmail.com>
  */
 
 /**
- * @typedef  {Object} WordList
- * @property {Map} links
- *           Коллекция со списокм звеньев
- * @property {Array<string>} startWords
- *           Массив со списком слов для начала предления
+ * @typedef {Object} WordList
+ * @property {Map} links Коллекция со списокм звеньев
+ * @property {Array<string>} startWords Массив со списком "стартовых слов", с
+ * которых может начинаться предложение
  */
 
 /**
  * Подготавливает звенья, возращает списки слов и список слов, с которых может
  * начинаться предложение.
- * @param  {string} input Исходный текст для создания звеньев
+ * @param {string} input Исходный текст для создания звеньев
  * @return {WordList}
  */
 function prepareLinks(input) {
@@ -35,22 +34,22 @@ function prepareLinks(input) {
         // Удаляем ненужные символы
         .replace(/[^A-zА-я0-9 -\!\?\.,:]/g, '')
         // Разбиваем текст на массив
-        .split(' ').filter(item => item)
+        .split(' ')
+        .filter(item => item)
 
     // Заполняем звенья
     const links = new Map()
     for (let word of new Set(words)) {
-        // Это это последнее слово в предложении,
-        // у него не может быть слов, которые идут после него,
+        // Это последнее слово в предложении, после него не могут идти слова,
         // следовательно, идём дальше
         if (/[.!?]/.test(word[word.length - 1])) {
             continue
         }
 
-        // Ищем слова, которые встречаются после текущего
-        // И добавляем их в список
+        // Ищем слова, которые встречаются после текущего и добавляем их
+        // в список
         let index = words.indexOf(word)
-        while(index > -1) {
+        while (index > -1) {
             let nextWord = words[index + 1]
 
             // Останавливаем цикл, если следующая ячейка пустая
@@ -73,13 +72,13 @@ function prepareLinks(input) {
 
 /**
  * Возвращает сгенерированный текст
- * @param  {Map}     links      Ассоциативный массив со списком звеньев
- * @param  {Array}   startWords Массив со списком слов для начала предложения
- * @param  {?number} [amount=1] Количество предложений
- * @return {string}             Сгенерированный текст
+ * @param {Map} links Ассоциативный массив со списком звеньев
+ * @param {Array} startWords Массив со списком слов для начала предложения
+ * @param {?number} [amount=1] Количество предложений
+ * @return {string} Сгенерированный текст
  */
 function generateText(links, startWords, amount = 1) {
-    let sentence = startWords[Math.random() * startWords.length | 0]
+    let sentence = startWords[(Math.random() * startWords.length) | 0]
     let lastWord = sentence
 
     for (let i = 0; !/[.!?]/.test(sentence[sentence.length - 1]); i++) {
@@ -87,7 +86,7 @@ function generateText(links, startWords, amount = 1) {
             break
         }
 
-        let newWordIndex = Math.random() * links.get(lastWord).size | 0
+        let newWordIndex = (Math.random() * links.get(lastWord).size) | 0
         let newWord = links.get(lastWord).get(newWordIndex)
 
         lastWord = newWord
@@ -102,11 +101,11 @@ function generateText(links, startWords, amount = 1) {
     }
 
     // Генерируем следующее предложение
-    const nextSentence = Math.max(amount, 1) > 1
-        ? ' ' + generateText(links, startWords, amount - 1)
-        : ''
+    if (Math.max(amount, 1) > 1) {
+        return sentence + ' ' + generateText(links, startWords, amount - 1)
+    }
 
-    return sentence + nextSentence
+    return sentence
 }
 
 /**
@@ -114,5 +113,5 @@ function generateText(links, startWords, amount = 1) {
  */
 module.exports = {
     prepareLinks,
-    generateText,
+    generateText
 }
